@@ -174,4 +174,6 @@ git stash
 git branch initial_conf
 git checkout initial_conf
 git stash pop
+git add *
+git commit -m "initial conf of thymeleaft and H2 DB"
 ```
