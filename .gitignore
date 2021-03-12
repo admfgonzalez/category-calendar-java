@@ -1,3 +1,9 @@
+# vscode launch file
+launch.json
+.vscode/
+target/
+.project
+
 # Compiled class file
 *.class
 
