@@ -176,4 +176,8 @@ git checkout initial_conf
 git stash pop
 git add *
 git commit -m "initial conf of thymeleaft and H2 DB"
+git push --set-upstream origin initial_conf 
+git push
 ```
+
+additional add a merge form github interface

@@ -3,6 +3,9 @@ launch.json
 .vscode/
 target/
 .project
+.settings/
+.classpath
+.factorypath
 
 # Compiled class file
 *.class
