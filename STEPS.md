@@ -62,10 +62,31 @@ Add Spring boot dependences
             <optional>true</optional>
         </dependency>
 
-        <!-- TEST dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <!-- exclude junit 4 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- junit 5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         ...
@@ -162,9 +183,14 @@ and h2-console [http://localhost:8080/h2](http://localhost:8080/h2) make sure 'J
 add vscode files to .gitignore
 
 ```
-# vscode launch file
-launch.json
+# vscode and configuration files
+target/
 .vscode/
+.project
+.settings/
+.classpath
+.factorypath
+launch.json
 ```
 
 Update initial changes to git (thymeleaft and H2)
@@ -181,3 +207,14 @@ git push
 ```
 
 additional add a merge form github interface
+
+create branch category-develop
+
+```
+git branch category-develop
+git checkout category-develop
+```
+
+creation of test, repositories, model and service 'TDD'
+
+For the correct insert of data.sql I have to create InMemoryConfig.java and add @Postonstruct with the call of the archive data.sql.
