@@ -2,6 +2,7 @@ package com.fgonzalez.categorycalendar;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -84,5 +85,24 @@ public class CategoryIntegrationTest {
         // Assert the response
         Assertions.assertNotNull(returnedCategory, "The saved category should not be null");
         Assertions.assertEquals(category.getId(), returnedCategory.getId(), "The return object is not the expected");
+    }
+
+    @Test
+    @DisplayName("Test change active")
+    void testChangeActive() {
+         // Setup our mock repository
+         Category category = new Category(1, "work", false);
+         doReturn(1).when(categoryRepository).updateCategoryActive(1, false);
+         doReturn(Optional.of(category)).when(categoryRepository).findById(1);
+ 
+         // Execute the service call
+         categoryService.changeActive(category.getId(), false);
+
+         // capture the rgister
+         Optional<Category> returnedCategory = categoryService.findById(1);
+         
+         // Assert the response
+         Assertions.assertNotNull(returnedCategory, "The saved category should not be null");
+         Assertions.assertEquals(false, returnedCategory.get().isActive(), "The return object should not active");
     }
 }

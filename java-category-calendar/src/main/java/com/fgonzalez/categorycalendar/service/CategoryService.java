@@ -10,4 +10,5 @@ public interface CategoryService {
     List<Category> findAll();
     Category save(Category category);
     void deleteById(Integer id);
+    void changeActive(Integer id, boolean active);
 }

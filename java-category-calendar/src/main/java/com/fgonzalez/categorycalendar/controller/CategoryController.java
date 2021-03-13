@@ -1,25 +1,33 @@
 package com.fgonzalez.categorycalendar.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fgonzalez.categorycalendar.model.Category;
 import com.fgonzalez.categorycalendar.service.CategoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
-    
+
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping(value="/getcategories", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/getcategories", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Category> getCategories() {
         return categoryService.findAll();
+    }
+
+    @RequestMapping(value = "/changeactive", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void changeActive(@RequestBody Map<String, Object> payload) {
+        categoryService.changeActive((Integer) payload.get("id"), (boolean) payload.get("active"));
     }
 }
