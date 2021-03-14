@@ -1,7 +1,5 @@
 package com.fgonzalez.categorycalendar.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +27,7 @@ public @Data class CategorySchedule {
 
     @Column(name = "schedule_date")
     @NonNull
-    private Date scheduleDate;
+    private Integer scheduleDate;
 
     @JoinColumn(name = "fk_categories_id")
     @OneToOne(optional = true)

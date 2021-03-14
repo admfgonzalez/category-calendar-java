@@ -6,7 +6,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,9 +42,9 @@ public class CategoryScheduleControllerTest extends AbstractControllerTest {
 
         defaultCategory = new Category(1, "work", true);
 
-        categorySchedule1 = new CategorySchedule(1, new Date(), defaultCategory, true);
-        categorySchedule2 = new CategorySchedule(2, new Date(), defaultCategory, true);
-        newCategorySchedule = new CategorySchedule(3, new Date(), defaultCategory, true);
+        categorySchedule1 = new CategorySchedule(1, 20210313, defaultCategory, true);
+        categorySchedule2 = new CategorySchedule(2, 20210313, defaultCategory, true);
+        newCategorySchedule = new CategorySchedule(3, 20210313, defaultCategory, true);
 
         doReturn(Arrays.asList(categorySchedule1, categorySchedule2)).when(categoryScheduleRepository).findAll();
         when(categoryScheduleRepository.findById(1)).thenReturn(Optional.of(categorySchedule1));
@@ -75,6 +74,8 @@ public class CategoryScheduleControllerTest extends AbstractControllerTest {
     @Test
     @DisplayName("Remove category controller test")
     public void testRemoveCategorySchedule() throws Exception {
+        when(categoryScheduleRepository.findOne(any())).thenReturn(Optional.of(categorySchedule1));
+
         MvcResult mvcResult = mvc
             .perform(
                 MockMvcRequestBuilders.post("/categoryschedule/removecategoryschedule")

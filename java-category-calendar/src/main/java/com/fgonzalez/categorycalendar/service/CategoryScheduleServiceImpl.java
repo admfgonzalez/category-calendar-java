@@ -40,14 +40,22 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
         }
         if (categorySchedule.getCategory() == null) {
             throw new IllegalArgumentException("The new Category Schedule require a Category");
-        } else {
-            Optional<Category> response = categoryRepository.findById(categorySchedule.getCategory().getId());
-            if (!response.isPresent()) {
-                throw new RecordNotFoundException("Category not found");
-            } else {
-                categorySchedule.setCategory(response.get());
-            }
         }
+
+        Optional<Category> response = categoryRepository.findById(categorySchedule.getCategory().getId());
+        if (!response.isPresent()) {
+            throw new RecordNotFoundException("Category not found");
+        }
+        categorySchedule.setCategory(response.get());
+
+        CategorySchedule categoryByScheduleAndCategoryId = categoryScheduleRepository
+                .getCategoryByScheduleAndCategoryId(categorySchedule.getScheduleDate(), categorySchedule.getCategory());
+
+        if (categoryByScheduleAndCategoryId != null) {
+            categoryByScheduleAndCategoryId.setActive(true);
+            return categoryScheduleRepository.save(categoryByScheduleAndCategoryId);
+        }
+
         return categoryScheduleRepository.save(categorySchedule);
     }
 
@@ -67,7 +75,8 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
             searchCategory.get().setActive(false);
             categoryScheduleRepository.save(searchCategory.get());
         } else {
-            throw new RecordNotFoundException("Category Schedule with id '" + categorySchedule.getId() + "' does no exist");
+            throw new RecordNotFoundException(
+                    "Category Schedule with id '" + categorySchedule.getId() + "' does no exist");
         }
     }
 }

@@ -1,9 +1,10 @@
 package com.fgonzalez.categorycalendar;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,9 +37,9 @@ public class CategoryScheduleIntegrationTest {
     @BeforeEach
     void setup() {
         defaultCategory = new Category(1, "work", true);
-        categorySchedule1 = new CategorySchedule(1, new Date(), defaultCategory, true);
-        categorySchedule2 = new CategorySchedule(2, new Date(), defaultCategory, true);
-        newCategorySchedule = new CategorySchedule(3, new Date(), defaultCategory, true);
+        categorySchedule1 = new CategorySchedule(1, 20210313, defaultCategory, true);
+        categorySchedule2 = new CategorySchedule(2, 20210313, defaultCategory, true);
+        newCategorySchedule = new CategorySchedule(3, 20210313, defaultCategory, true);
  
         doReturn(Optional.of(categorySchedule1)).when(categoryScheduleRepository).findById(1);
         doReturn(Optional.of(categorySchedule2)).when(categoryScheduleRepository).findById(2);
@@ -91,10 +92,20 @@ public class CategoryScheduleIntegrationTest {
     @Test
     @DisplayName("Test remove Category Schedule")
     void testRemoveCategorySchedule() {
+        when(categoryScheduleRepository.findOne(any())).thenReturn(Optional.of(categorySchedule1));
         categoryScheduleService.removeCategorySchedule(categorySchedule1);
         Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleRepository.findById(categorySchedule1.getId());
 
         Assertions.assertNotNull(returnedCategorySchedule, "The saved category should not be null");
         Assertions.assertEquals(false, returnedCategorySchedule.get().isActive(), "The return object should not active");
+    }
+
+    @Test
+    @DisplayName("Test getCategoryByScheduleAndCategoryId")
+    void testGetCategoryByScheduleAndCategoryId() {
+        when(categoryScheduleRepository.getCategoryByScheduleAndCategoryId(any(), any())).thenReturn(categorySchedule1);
+
+        CategorySchedule categorySchedule = categoryScheduleRepository.getCategoryByScheduleAndCategoryId(categorySchedule1.getScheduleDate(), categorySchedule1.getCategory());
+        Assertions.assertEquals(categorySchedule1, categorySchedule, "The return object is not the expected");
     }
 }

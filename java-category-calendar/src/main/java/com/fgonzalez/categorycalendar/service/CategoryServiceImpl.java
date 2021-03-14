@@ -9,7 +9,6 @@ import com.fgonzalez.categorycalendar.model.Category;
 import com.fgonzalez.categorycalendar.repository.CategoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,10 +35,10 @@ public class CategoryServiceImpl implements CategoryService {
         }
         // search by category name on lowercase
         category.setCategoryName(category.getCategoryName().toLowerCase());
-        Optional<Category> response = categoryRepository.findOne(Example.of(new Category(category.getCategoryName())));
-        if (response.isPresent()) {
-            response.get().setActive(true);
-            return save(response.get());
+        Category responseCategory = categoryRepository.getCategoryByNameCategory(category.getCategoryName());
+        if (responseCategory != null) {
+            responseCategory.setActive(true);
+            return categoryRepository.save(responseCategory);
         }
         return save(category);
     }
