@@ -1,6 +1,5 @@
 package com.fgonzalez.categorycalendar;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Arrays;
@@ -14,7 +13,7 @@ import com.fgonzalez.categorycalendar.repository.CategoryScheduleRepository;
 import com.fgonzalez.categorycalendar.service.CategoryScheduleService;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,70 +28,73 @@ public class CategoryScheduleIntegrationTest {
     @Autowired
     private CategoryScheduleService categoryScheduleService;
 
-    private static Category defaultCategory;
+    private Category defaultCategory;
+    private CategorySchedule categorySchedule1;
+    private CategorySchedule categorySchedule2;
+    private CategorySchedule newCategorySchedule;
 
-    @BeforeAll
-    static void loadCategory() {
+    @BeforeEach
+    void setup() {
         defaultCategory = new Category(1, "work", true);
+        categorySchedule1 = new CategorySchedule(1, new Date(), defaultCategory, true);
+        categorySchedule2 = new CategorySchedule(2, new Date(), defaultCategory, true);
+        newCategorySchedule = new CategorySchedule(3, new Date(), defaultCategory, true);
+ 
+        doReturn(Optional.of(categorySchedule1)).when(categoryScheduleRepository).findById(1);
+        doReturn(Optional.of(categorySchedule2)).when(categoryScheduleRepository).findById(2);
+        doReturn(Optional.empty()).when(categoryScheduleRepository).findById(4);
+        doReturn(Arrays.asList(categorySchedule1, categorySchedule2)).when(categoryScheduleRepository).findAll();
+        doReturn(newCategorySchedule).when(categoryScheduleRepository).save(newCategorySchedule);
     }
 
     @Test
     @DisplayName("Test findById")
     public void testFindById() {
-        // Setup our mock repository
-        CategorySchedule categorySchedule;
-        doReturn(Optional.of(categorySchedule = new CategorySchedule(1, new Date(), defaultCategory, true))).when(categoryScheduleRepository).findById(1);
-        doReturn(Optional.of(new CategorySchedule(2, new Date(), defaultCategory, true))).when(categoryScheduleRepository).findById(2);
-
-        // Execute the service call
         Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleService.findById(1);
-
-        // Assert the response
         Assertions.assertTrue(returnedCategorySchedule.isPresent(), "Category Schedule was not found");
-        Assertions.assertSame(returnedCategorySchedule.get(), categorySchedule, "The category schedule returned was not the same as the mock");
+        Assertions.assertSame(returnedCategorySchedule.get(), categorySchedule1,
+                "The category schedule returned was not the same as the mock");
     }
-
 
     @Test
     @DisplayName("Test findById Not Found")
     void testFindByIdNotFound() {
-        // Setup our mock repository
-        doReturn(Optional.empty()).when(categoryScheduleRepository).findById(1);
-
-        // Execute the service call
-        Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleService.findById(1);
-
-        // Assert the response
+        Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleService.findById(4);
         Assertions.assertFalse(returnedCategorySchedule.isPresent(), "Category schedule should not be found");
     }
 
     @Test
     @DisplayName("Test findAll")
     void testFindAll() {
-        // Setup our mock repository
-        CategorySchedule categorySchedule1 = new CategorySchedule(1, new Date(), defaultCategory, true);
-        CategorySchedule categorySchedule2 = new CategorySchedule(2, new Date(), defaultCategory, true);
-        doReturn(Arrays.asList(categorySchedule1, categorySchedule2)).when(categoryScheduleRepository).findAll();
-
-        // Execute the service call
         List<CategorySchedule> categories = categoryScheduleService.findAll();
-
-        // Assert the response
         Assertions.assertEquals(2, categories.size(), "findAll should return 2 registers");
     }
 
     @Test
     @DisplayName("Test save category")
     void testSave() {
-        // Setup our mock repository
-        CategorySchedule categorySchedule = new CategorySchedule(1, new Date(), defaultCategory, true);;
-        doReturn(categorySchedule).when(categoryScheduleRepository).save(any());
+        CategorySchedule returnedCategory = categoryScheduleService.save(newCategorySchedule);
 
-        // Execute the service call
-        CategorySchedule returnedCategory = categoryScheduleService.save(categorySchedule);
-
-        // Assert the response
         Assertions.assertNotNull(returnedCategory, "The saved category schedule should not be null");
-        Assertions.assertEquals(categorySchedule.getId(), returnedCategory.getId(), "The return object is not the expected");
+        Assertions.assertEquals(newCategorySchedule.getId(), returnedCategory.getId(),
+                "The return object is not the expected");
+    }
+
+    @Test
+    @DisplayName("Test save null category schedule")
+    void testSaveNull() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            categoryScheduleService.save(null);
+        });
+    }
+
+    @Test
+    @DisplayName("Test remove Category Schedule")
+    void testRemoveCategorySchedule() {
+        categoryScheduleService.removeCategorySchedule(categorySchedule1);
+        Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleRepository.findById(categorySchedule1.getId());
+
+        Assertions.assertNotNull(returnedCategorySchedule, "The saved category should not be null");
+        Assertions.assertEquals(false, returnedCategorySchedule.get().isActive(), "The return object should not active");
     }
 }

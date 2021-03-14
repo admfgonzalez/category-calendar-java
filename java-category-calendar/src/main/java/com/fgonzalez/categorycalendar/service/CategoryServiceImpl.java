@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.fgonzalez.categorycalendar.exception.RecordNotFoundException;
 import com.fgonzalez.categorycalendar.model.Category;
 import com.fgonzalez.categorycalendar.repository.CategoryRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,12 +30,41 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category save(Category category) {
-        return categoryRepository.save(category);
+    public Category addNew(Category category) throws IllegalArgumentException {
+        if (category.getCategoryName().trim().isEmpty()) {
+            throw new IllegalArgumentException("The new Category require a name");
+        }
+        // search by category name on lowercase
+        category.setCategoryName(category.getCategoryName().toLowerCase());
+        Optional<Category> response = categoryRepository.findOne(Example.of(new Category(category.getCategoryName())));
+        if (response.isPresent()) {
+            response.get().setActive(true);
+            return save(response.get());
+        }
+        return save(category);
     }
 
     @Override
-    public void deleteById(Integer id) {
-        categoryRepository.deleteById(id);
+    public Category save(Category category) {
+        if (category == null) {
+            throw new IllegalArgumentException("The category must be not null");
+        }
+        if (category.getCategoryName().trim().isEmpty()) {
+            throw new IllegalArgumentException("The category must be a name");
+        }
+        category.setCategoryName(category.getCategoryName().toLowerCase());
+        return categoryRepository.save(category);
+    }
+
+    // No category must be deleted
+    @Override
+    public void removeCategory(Category category) throws IllegalArgumentException {
+        Optional<Category> searchCategory = categoryRepository.findById(category.getId());
+        if (searchCategory.isPresent()) {
+            searchCategory.get().setActive(false);
+            categoryRepository.save(searchCategory.get());
+        } else {
+            throw new RecordNotFoundException("Category with id '" + category.getId() + "' does no exist");
+        }
     }
 }

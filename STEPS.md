@@ -215,6 +215,6 @@ git branch category-develop
 git checkout category-develop
 ```
 
-creation of test, repositories, model and service 'TDD'
+creation of test, repositories, controller, model and service through 'TDD'
 
 For the correct insert of data.sql I have to create InMemoryConfig.java and add @Postonstruct with the call of the archive data.sql.
