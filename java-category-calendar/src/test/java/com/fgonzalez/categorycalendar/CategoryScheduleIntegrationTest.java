@@ -101,11 +101,13 @@ public class CategoryScheduleIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test getCategoryByScheduleAndCategoryId")
-    void testGetCategoryByScheduleAndCategoryId() {
-        when(categoryScheduleRepository.getCategoryByScheduleAndCategoryId(any(), any())).thenReturn(categorySchedule1);
+    @DisplayName("Test getCategorySchedulesByYear") 
+    public void testGetCategorySchedulesByYear() {
+        List<CategorySchedule> expected = Arrays.asList(categorySchedule1, categorySchedule2);
+        when(categoryScheduleRepository.findCategorySchedulesByYear(2021)).thenReturn(expected);
 
-        CategorySchedule categorySchedule = categoryScheduleRepository.getCategoryByScheduleAndCategoryId(categorySchedule1.getScheduleDate(), categorySchedule1.getCategory());
-        Assertions.assertEquals(categorySchedule1, categorySchedule, "The return object is not the expected");
+        List<CategorySchedule> categoriSchedulesReturn = categoryScheduleService.findByYear(2021);
+
+        Assertions.assertEquals(expected, categoriSchedulesReturn, "CategorySchedules By year have not expected result");   
     }
 }

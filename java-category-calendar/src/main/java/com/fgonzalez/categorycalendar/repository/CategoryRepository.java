@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Query(value = "SELECT c FROM Category c WHERE c.categoryName = :categoryName")
-    public Category getCategoryByNameCategory(@Param("categoryName") String categoryName);
+    public Category findCategoryByNameCategory(@Param("categoryName") String categoryName);
 }

@@ -34,6 +34,14 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
     }
 
     @Override
+    public List<CategorySchedule> findByYear(Integer year) throws IllegalArgumentException {
+        if (year < 1) {
+            throw new IllegalArgumentException("The year mus be positive");
+        }
+        return categoryScheduleRepository.findCategorySchedulesByYear(year);
+    }
+
+    @Override
     public CategorySchedule addNew(CategorySchedule categorySchedule) throws IllegalArgumentException {
         if (categorySchedule.getScheduleDate() == null) {
             throw new IllegalArgumentException("The new Category Schedule require a date");
@@ -49,7 +57,7 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
         categorySchedule.setCategory(response.get());
 
         CategorySchedule categoryByScheduleAndCategoryId = categoryScheduleRepository
-                .getCategoryByScheduleAndCategoryId(categorySchedule.getScheduleDate(), categorySchedule.getCategory());
+                .findCategoryByScheduleAndCategoryId(categorySchedule.getScheduleDate(), categorySchedule.getCategory());
 
         if (categoryByScheduleAndCategoryId != null) {
             categoryByScheduleAndCategoryId.setActive(true);

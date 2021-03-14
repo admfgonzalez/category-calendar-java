@@ -37,7 +37,7 @@ public class CategoryIntegrationTest {
         doReturn(Optional.of(category1)).when(categoryRepository).findById(1);
         doReturn(Optional.of(category2)).when(categoryRepository).findById(2);
         doReturn(Optional.empty()).when(categoryRepository).findById(3);
-        doReturn(category1).when(categoryRepository).getCategoryByNameCategory(category1.getCategoryName());
+        doReturn(category1).when(categoryRepository).findCategoryByNameCategory(category1.getCategoryName());
     }
     
     @Test

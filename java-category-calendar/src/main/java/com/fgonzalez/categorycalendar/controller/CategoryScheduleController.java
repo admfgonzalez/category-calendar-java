@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,6 +22,11 @@ public class CategoryScheduleController {
     @RequestMapping(value = "/getcategoryschedules", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<CategorySchedule> getCategorySchedules() {
         return categoryScheduleService.findAll();
+    }
+
+    @RequestMapping(value = "/getcategoryschedulesbyyear", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CategorySchedule> getCategorySchedulesByYear(@RequestParam("year") Integer year) {
+        return categoryScheduleService.findByYear(year);
     }
 
     @RequestMapping(value = "/removecategoryschedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

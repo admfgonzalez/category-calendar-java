@@ -8,6 +8,7 @@ import com.fgonzalez.categorycalendar.model.CategorySchedule;
 public interface CategoryScheduleService {
     Optional<CategorySchedule> findById(Integer id);
     List<CategorySchedule> findAll();
+    List<CategorySchedule> findByYear(Integer year) throws IllegalArgumentException;
     CategorySchedule addNew(CategorySchedule category) throws IllegalArgumentException;
     void removeCategorySchedule(CategorySchedule category) throws IllegalArgumentException;
     CategorySchedule save(CategorySchedule category) throws IllegalArgumentException;

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,8 +36,9 @@ public class CategoryScheduleControllerTest extends AbstractControllerTest {
     private CategorySchedule categorySchedule1;
     private CategorySchedule categorySchedule2;
     private CategorySchedule newCategorySchedule;
+
     @BeforeEach
-    protected void setUp() { 
+    protected void setUp() {
         super.setUp();
         mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
@@ -51,7 +53,7 @@ public class CategoryScheduleControllerTest extends AbstractControllerTest {
         when(categoryScheduleRepository.findById(2)).thenReturn(Optional.of(categorySchedule2));
         when(categoryScheduleRepository.save(newCategorySchedule)).thenReturn(newCategorySchedule);
 
-        doAnswer(new Answer<Void>(){
+        doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
                 return null;
@@ -62,13 +64,11 @@ public class CategoryScheduleControllerTest extends AbstractControllerTest {
     @Test
     @DisplayName("Test get all schedules")
     public void testGetCategories() throws Exception {
-        MvcResult mvcResult = mvc
-                .perform(
-                        MockMvcRequestBuilders.get("/categoryschedule/getcategoryschedules/").accept(MediaType.APPLICATION_JSON_VALUE))
-                .andReturn();
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/categoryschedule/getcategoryschedules/")
+                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         String content = mvcResult.getResponse().getContentAsString();
-        Assertions.assertArrayEquals(new CategorySchedule[] { categorySchedule1, categorySchedule2 }, mapFromJson(content, CategorySchedule[].class),
-                "The retuns must be all the categories");
+        Assertions.assertArrayEquals(new CategorySchedule[] { categorySchedule1, categorySchedule2 },
+                mapFromJson(content, CategorySchedule[].class), "The retuns must be all the categories");
     }
 
     @Test
@@ -77,36 +77,46 @@ public class CategoryScheduleControllerTest extends AbstractControllerTest {
         when(categoryScheduleRepository.findOne(any())).thenReturn(Optional.of(categorySchedule1));
 
         MvcResult mvcResult = mvc
-            .perform(
-                MockMvcRequestBuilders.post("/categoryschedule/removecategoryschedule")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(mapToJson(categorySchedule1)))
-            .andReturn();
-        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus(), "Expected operation was correct");
+                .perform(MockMvcRequestBuilders.post("/categoryschedule/removecategoryschedule")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapToJson(categorySchedule1)))
+                .andReturn();
+        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus(),
+                "Expected operation was correct");
     }
-    
+
     @Test
     @DisplayName("Add new Category Schedule test")
     public void testAddcategorySchedule() throws Exception {
 
         MvcResult mvcResult = mvc
-            .perform(
-                MockMvcRequestBuilders.post("/categoryschedule/addcategoryschedule")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(mapToJson(newCategorySchedule)))
-            .andReturn();
+                .perform(MockMvcRequestBuilders.post("/categoryschedule/addcategoryschedule")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapToJson(newCategorySchedule)))
+                .andReturn();
 
-        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus(), "Expected operation was correct");
+        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus(),
+                "Expected operation was correct");
 
         Map<String, Object> payload = new HashMap<String, Object>();
         payload.put("scheduleDate", null);
         payload.put("active", true);
-        mvcResult = mvc
-            .perform(
-                MockMvcRequestBuilders.post("/categoryschedule/addcategoryschedule")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(mapToJson(payload)))
-            .andReturn();
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mvcResult.getResponse().getStatus(), "Expected error on server side");
+        mvcResult = mvc.perform(MockMvcRequestBuilders.post("/categoryschedule/addcategoryschedule")
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapToJson(payload))).andReturn();
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mvcResult.getResponse().getStatus(),
+                "Expected error on server side");
+    }
+
+    @Test
+    @DisplayName("Test getcategoryschedulesbyyear")
+    void testGetCategorySchedulesByYear() throws Exception {
+        List<CategorySchedule> expected = Arrays.asList(categorySchedule1, categorySchedule2);
+        when(categoryScheduleRepository.findCategorySchedulesByYear(2021)).thenReturn(expected);
+
+        MvcResult mvcResult = mvc
+                .perform(MockMvcRequestBuilders.get("/categoryschedule/getcategoryschedulesbyyear")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .param("year", "2021"))
+                .andReturn();
+
+        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus(),  "Expected operation was correct");
     }
 }

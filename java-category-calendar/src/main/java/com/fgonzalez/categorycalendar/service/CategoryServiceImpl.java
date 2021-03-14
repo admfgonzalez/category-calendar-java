@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
         // search by category name on lowercase
         category.setCategoryName(category.getCategoryName().toLowerCase());
-        Category responseCategory = categoryRepository.getCategoryByNameCategory(category.getCategoryName());
+        Category responseCategory = categoryRepository.findCategoryByNameCategory(category.getCategoryName());
         if (responseCategory != null) {
             responseCategory.setActive(true);
             return categoryRepository.save(responseCategory);
