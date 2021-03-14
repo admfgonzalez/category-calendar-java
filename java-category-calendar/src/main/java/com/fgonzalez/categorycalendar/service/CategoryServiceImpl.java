@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.save(category);
     }
 
-    // No category is deleted
+    // No category must be deleted
     @Override
     public void removeCategory(Category category) throws IllegalArgumentException {
         Optional<Category> searchCategory = categoryRepository.findById(category.getId());

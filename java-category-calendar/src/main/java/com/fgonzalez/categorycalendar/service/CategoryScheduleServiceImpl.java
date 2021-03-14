@@ -59,6 +59,7 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
         return categoryScheduleRepository.save(categorySchedule);
     }
 
+    // No category schedule must be deleted
     @Override
     public void removeCategorySchedule(CategorySchedule categorySchedule) {
         Optional<CategorySchedule> searchCategory = categoryScheduleRepository.findById(categorySchedule.getId());
