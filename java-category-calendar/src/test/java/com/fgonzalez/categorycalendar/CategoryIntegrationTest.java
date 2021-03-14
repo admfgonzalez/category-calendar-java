@@ -37,6 +37,7 @@ public class CategoryIntegrationTest {
         doReturn(Optional.of(category1)).when(categoryRepository).findById(1);
         doReturn(Optional.of(category2)).when(categoryRepository).findById(2);
         doReturn(Optional.empty()).when(categoryRepository).findById(3);
+        doReturn(category1).when(categoryRepository).getCategoryByNameCategory(category1.getCategoryName());
     }
     
     @Test
@@ -87,11 +88,8 @@ public class CategoryIntegrationTest {
 
     @Test
     @DisplayName("Test remove Category")
-    void testRemoveCategory() {
-         Category category = new Category(1, "work", false);
-         doReturn(Optional.of(category)).when(categoryRepository).findById(1);
- 
-         categoryService.removeCategory(category);
+    void testRemoveCategory() { 
+         categoryService.removeCategory(category1);
 
          Optional<Category> returnedCategory = categoryService.findById(1);
          

@@ -138,7 +138,7 @@ DROP TABLE IF EXISTS TBL_CATEGORY_SCHEDULE;
 
 CREATE TABLE TBL_CATEGORY_SCHEDULE (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  schedule_date DATE NOT NULL,
+  schedule_date INT NOT NULL,
   fk_categories_id INT NOT NULL
 );
 
@@ -217,4 +217,4 @@ git checkout category-develop
 
 creation of test, repositories, controller, model and service through 'TDD'
 
-For the correct insert of data.sql I have to create InMemoryConfig.java and add @Postonstruct with the call of the archive data.sql.
+* For the correct insert of data.sql I have to create InMemoryConfig.java and add @Postonstruct with the call of the archive data.sql.
