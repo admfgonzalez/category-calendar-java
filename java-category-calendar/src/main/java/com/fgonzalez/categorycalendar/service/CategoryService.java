@@ -8,7 +8,7 @@ import com.fgonzalez.categorycalendar.model.Category;
 public interface CategoryService {
     Optional<Category> findById(Integer id);
     List<Category> findAll();
-    Category save(Category category);
-    void deleteById(Integer id);
-    void changeActive(Integer id, boolean active);
+    Category addNew(Category category) throws IllegalArgumentException;
+    void removeCategory(Category category) throws IllegalArgumentException;
+    Category save(Category category) throws IllegalArgumentException;
 }
