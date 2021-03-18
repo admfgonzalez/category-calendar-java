@@ -2,16 +2,20 @@ package com.fgonzalez.categorycalendar.controller;
 
 import java.util.List;
 
-import com.fgonzalez.categorycalendar.model.CategorySchedule;
+import com.fgonzalez.categorycalendar.model.CategoryScheduleDTO;
 import com.fgonzalez.categorycalendar.service.CategoryScheduleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/categoryschedule")
@@ -19,23 +23,30 @@ public class CategoryScheduleController {
     @Autowired
     private CategoryScheduleService categoryScheduleService;
 
-    @RequestMapping(value = "/getcategoryschedules", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CategorySchedule> getCategorySchedules() {
-        return categoryScheduleService.findAll();
+    @ApiOperation("Get all category schedules active and no active")
+    @GetMapping(value = "/getcategoryschedules", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CategoryScheduleDTO> getCategorySchedules() {
+        return categoryScheduleService.findAll().get();
     }
 
-    @RequestMapping(value = "/getcategoryschedulesbyyear", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<CategorySchedule> getCategorySchedulesByYear(@RequestParam("year") Integer year) {
-        return categoryScheduleService.findByYear(year);
+    @ApiOperation("Get all category schedule active and no active from the send year")
+    @GetMapping(value = "/getcategoryschedulesbyyear", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<CategoryScheduleDTO> getCategorySchedulesByYear(
+            @ApiParam(value = "The year to search schedules", required = true, example = "2021") @RequestParam("year") Integer year) {
+        return categoryScheduleService.findByYear(year).get();
     }
 
-    @RequestMapping(value = "/removecategoryschedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void removeCategorySchedule(@RequestBody CategorySchedule oldCategorySchedule) {
+    @ApiOperation("Remove the send Category Schedule")
+    @PostMapping(value = "/removecategoryschedule", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void removeCategorySchedule(
+            @ApiParam(value = "The category schedule to remove", required = true) @RequestBody CategoryScheduleDTO oldCategorySchedule) {
         categoryScheduleService.removeCategorySchedule(oldCategorySchedule);
     }
 
-    @RequestMapping(value= "/addcategoryschedule", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CategorySchedule addCategorySchedule(@RequestBody CategorySchedule newCategorySchedule) {
-        return categoryScheduleService.addNew(newCategorySchedule);
+    @ApiOperation("Add the send Category Schedule")
+    @PostMapping(value = "/addcategoryschedule", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CategoryScheduleDTO addCategorySchedule(
+            @ApiParam(value = "The category schedule to add", required = true) @RequestBody CategoryScheduleDTO newCategoryScheduleDTO) {
+        return categoryScheduleService.addNew(newCategoryScheduleDTO).get();
     }
 }

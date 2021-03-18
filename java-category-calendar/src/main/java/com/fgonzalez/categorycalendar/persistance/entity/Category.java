@@ -1,39 +1,34 @@
-package com.fgonzalez.categorycalendar.model;
+package com.fgonzalez.categorycalendar.persistance.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Entity
-@Table(name = "TBL_CATEGORY_SCHEDULES")
+@Builder
+@Table(name = "TBL_Categories")
 @AllArgsConstructor
 @RequiredArgsConstructor
 @NoArgsConstructor
-public @Data class CategorySchedule {
+public @Data class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "schedule_date")
+    @Column(name = "category_name")
     @NonNull
-    private Integer scheduleDate;
-
-    @JoinColumn(name = "fk_categories_id")
-    @OneToOne(optional = true)
-    @NonNull
-    private Category category;
+    private String categoryName;
 
     @Column
-    private boolean active;
+    private Boolean active;
 }

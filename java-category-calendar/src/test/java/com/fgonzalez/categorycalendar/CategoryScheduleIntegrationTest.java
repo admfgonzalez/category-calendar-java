@@ -1,6 +1,5 @@
 package com.fgonzalez.categorycalendar;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -8,9 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.fgonzalez.categorycalendar.model.Category;
-import com.fgonzalez.categorycalendar.model.CategorySchedule;
-import com.fgonzalez.categorycalendar.repository.CategoryScheduleRepository;
+import com.fgonzalez.categorycalendar.model.CategoryScheduleDTO;
+import com.fgonzalez.categorycalendar.persistance.entity.Category;
+import com.fgonzalez.categorycalendar.persistance.entity.CategorySchedule;
+import com.fgonzalez.categorycalendar.persistance.mapper.CategoryScheduleMapper;
+import com.fgonzalez.categorycalendar.persistance.repository.CategoryScheduleRepository;
 import com.fgonzalez.categorycalendar.service.CategoryScheduleService;
 
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +30,9 @@ public class CategoryScheduleIntegrationTest {
     @Autowired
     private CategoryScheduleService categoryScheduleService;
 
+    @Autowired
+    private CategoryScheduleMapper categoryScheduleMapper;
+
     private Category defaultCategory;
     private CategorySchedule categorySchedule1;
     private CategorySchedule categorySchedule2;
@@ -36,11 +40,11 @@ public class CategoryScheduleIntegrationTest {
 
     @BeforeEach
     void setup() {
-        defaultCategory = new Category(1, "work", true);
+        defaultCategory = Category.builder().id(1).categoryName("work").active(true).build();
         categorySchedule1 = new CategorySchedule(1, 20210313, defaultCategory, true);
         categorySchedule2 = new CategorySchedule(2, 20210313, defaultCategory, true);
         newCategorySchedule = new CategorySchedule(3, 20210313, defaultCategory, true);
- 
+
         doReturn(Optional.of(categorySchedule1)).when(categoryScheduleRepository).findById(1);
         doReturn(Optional.of(categorySchedule2)).when(categoryScheduleRepository).findById(2);
         doReturn(Optional.empty()).when(categoryScheduleRepository).findById(4);
@@ -51,33 +55,35 @@ public class CategoryScheduleIntegrationTest {
     @Test
     @DisplayName("Test findById")
     public void testFindById() {
-        Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleService.findById(1);
+        Optional<CategoryScheduleDTO> returnedCategorySchedule = categoryScheduleService.findById(1);
         Assertions.assertTrue(returnedCategorySchedule.isPresent(), "Category Schedule was not found");
-        Assertions.assertSame(returnedCategorySchedule.get(), categorySchedule1,
+        Assertions.assertEquals(returnedCategorySchedule.get(),
+                categoryScheduleMapper.toCategoryScheduleDTO(categorySchedule1),
                 "The category schedule returned was not the same as the mock");
     }
 
     @Test
     @DisplayName("Test findById Not Found")
     void testFindByIdNotFound() {
-        Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleService.findById(4);
+        Optional<CategoryScheduleDTO> returnedCategorySchedule = categoryScheduleService.findById(4);
         Assertions.assertFalse(returnedCategorySchedule.isPresent(), "Category schedule should not be found");
     }
 
     @Test
     @DisplayName("Test findAll")
     void testFindAll() {
-        List<CategorySchedule> categories = categoryScheduleService.findAll();
-        Assertions.assertEquals(2, categories.size(), "findAll should return 2 registers");
+        Optional<List<CategoryScheduleDTO>> categories = categoryScheduleService.findAll();
+        Assertions.assertEquals(2, categories.get().size(), "findAll should return 2 registers");
     }
 
     @Test
     @DisplayName("Test save category")
     void testSave() {
-        CategorySchedule returnedCategory = categoryScheduleService.save(newCategorySchedule);
+        Optional<CategoryScheduleDTO> returnedCategory = categoryScheduleService
+                .save(categoryScheduleMapper.toCategoryScheduleDTO(newCategorySchedule));
 
         Assertions.assertNotNull(returnedCategory, "The saved category schedule should not be null");
-        Assertions.assertEquals(newCategorySchedule.getId(), returnedCategory.getId(),
+        Assertions.assertEquals(newCategorySchedule.getId(), returnedCategory.get().getId(),
                 "The return object is not the expected");
     }
 
@@ -92,22 +98,23 @@ public class CategoryScheduleIntegrationTest {
     @Test
     @DisplayName("Test remove Category Schedule")
     void testRemoveCategorySchedule() {
-        when(categoryScheduleRepository.findOne(any())).thenReturn(Optional.of(categorySchedule1));
-        categoryScheduleService.removeCategorySchedule(categorySchedule1);
-        Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleRepository.findById(categorySchedule1.getId());
+        categoryScheduleService.removeCategorySchedule(categoryScheduleMapper.toCategoryScheduleDTO(categorySchedule1));
+        Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleRepository
+                .findById(categorySchedule1.getId());
 
         Assertions.assertNotNull(returnedCategorySchedule, "The saved category should not be null");
-        Assertions.assertEquals(false, returnedCategorySchedule.get().isActive(), "The return object should not active");
+        Assertions.assertEquals(false, returnedCategorySchedule.get().getActive(),
+                "The return object should not active");
     }
 
     @Test
-    @DisplayName("Test getCategorySchedulesByYear") 
+    @DisplayName("Test getCategorySchedulesByYear")
     public void testGetCategorySchedulesByYear() {
         List<CategorySchedule> expected = Arrays.asList(categorySchedule1, categorySchedule2);
         when(categoryScheduleRepository.findCategorySchedulesByYear(2021)).thenReturn(expected);
 
-        List<CategorySchedule> categoriSchedulesReturn = categoryScheduleService.findByYear(2021);
-
-        Assertions.assertEquals(expected, categoriSchedulesReturn, "CategorySchedules By year have not expected result");   
+        Optional<List<CategoryScheduleDTO>> categoriSchedulesReturn = categoryScheduleService.findByYear(2021);
+        Assertions.assertEquals(categoryScheduleMapper.toCategorySchedulesDTO(expected), categoriSchedulesReturn.get(),
+                "CategorySchedules By year have not expected result");
     }
 }

@@ -5,10 +5,13 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fgonzalez.categorycalendar.persistance.mapper.CategoryMapperImpl;
+import com.fgonzalez.categorycalendar.persistance.mapper.CategoryScheduleMapperImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParseException;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -16,6 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @WebAppConfiguration
+@ComponentScan(basePackageClasses = {CategoryMapperImpl.class, CategoryScheduleMapperImpl.class})
 public abstract class AbstractControllerTest {
     protected MockMvc mvc;
 

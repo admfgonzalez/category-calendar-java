@@ -3,13 +3,18 @@ package com.fgonzalez.categorycalendar.service;
 import java.util.List;
 import java.util.Optional;
 
-import com.fgonzalez.categorycalendar.model.CategorySchedule;
+import com.fgonzalez.categorycalendar.model.CategoryScheduleDTO;
 
 public interface CategoryScheduleService {
-    Optional<CategorySchedule> findById(Integer id);
-    List<CategorySchedule> findAll();
-    List<CategorySchedule> findByYear(Integer year) throws IllegalArgumentException;
-    CategorySchedule addNew(CategorySchedule category) throws IllegalArgumentException;
-    void removeCategorySchedule(CategorySchedule category) throws IllegalArgumentException;
-    CategorySchedule save(CategorySchedule category) throws IllegalArgumentException;
+    Optional<CategoryScheduleDTO> findById(Integer id);
+
+    Optional<List<CategoryScheduleDTO>> findAll();
+
+    Optional<List<CategoryScheduleDTO>> findByYear(Integer year) throws IllegalArgumentException;
+
+    Optional<CategoryScheduleDTO> addNew(CategoryScheduleDTO category) throws IllegalArgumentException;
+
+    void removeCategorySchedule(CategoryScheduleDTO category) throws IllegalArgumentException;
+
+    Optional<CategoryScheduleDTO> save(CategoryScheduleDTO category) throws IllegalArgumentException;
 }
