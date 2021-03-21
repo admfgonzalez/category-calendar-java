@@ -4,6 +4,7 @@
  * Licensed under the MIT license.
 
  * @author Piotr Zatorski
+ * @author Francisco Gonzalez
  */
  (function ($) {
 
@@ -27,49 +28,12 @@
     $.fn.calendar = function (options) {
         $calendar = this;
 
-
         if (methods[options]) {
             return methods[options].apply(this, Array.prototype.slice.call(arguments, 1));
         } else if (typeof options === 'object' || !options) {
-
             settings = $.extend({}, $.fn.calendar.defaults, options);
 
             createWholeCalendar(settings, this);
-
-            // $calendar.find('.jqyc-prev-year').on("click", showPreviousYear,);
-            $calendar.find('.jqyc-next-year').on("click", showNextYear);
-            // $calendar.find('.jqyc-not-empty-td').on("click", triggerDayChoose);
-
-            // function showPreviousYear() {
-            //     var currentYear = parseInt($(this).parent().parent().data('currentYear'));
-
-            //     settings.startYear = settings.startYear - 1;
-            //     createWholeCalendar(settings, $calendar);
-            //     $calendar.find('.jqyc-prev-year').on("click", showPreviousYear);
-            //     $calendar.find('.jqyc-next-year').on("click", showNextYear);
-            //     $calendar.find('.jqyc-not-empty-td').on("click", triggerDayChoose);
-            //     $calendar.trigger('jqyc.changeYearToPrevious');
-            //     $(this).parent().parent().data('currentYear', currentYear);
-            // }
-
-            // function showNextYear() {
-            //     var currentYear = parseInt($(this).parent().parent().data('currentYear'));
-            //     settings.startYear = settings.startYear + 1;
-            //     createWholeCalendar(settings, $calendar);
-            //     $calendar.find('.jqyc-prev-year').on("click", showPreviousYear);
-            //     $calendar.find('.jqyc-next-year').on("click", showNextYear);
-            //     $calendar.find('.jqyc-not-empty-td').on("click", triggerDayChoose);
-            //     $calendar.trigger('jqyc.changeYearToNext');
-            //     $(this).parent().parent().data('currentYear', currentYear);
-            // }
-
-            function triggerDayChoose() {
-                $calendar.data('day-of-month', $(this).data('day-of-month'));
-                $calendar.data('month', $(this).data('month'));
-                $calendar.data('year', $(this).data('year'));
-                $calendar.trigger('jqyc.dayChoose');
-            }
-
 
             return methods.init.apply(this, arguments);
         } else {
@@ -311,10 +275,15 @@
                 d--;
                 monthHTMLString = monthHTMLString + '<td class="jqyc-empty-td jqyc-td"></td>';
             } else {
+                let categoryScheduleDate = categoryCalendarApp.getScheduleId(year, month, d);
                 monthHTMLString = monthHTMLString +
-                    '<td class="jqyc-not-empty-td jqyc-td jqyc-day-' + d
+                    '<td'
+                    + ' class="jqyc-not-empty-td jqyc-td jqyc-day-' + d
                     + ' jqyc-day-of-' + month + '-month" data-month="' + month
-                    + '" data-day-of-month="' + d + '" data-year="' + year + '">' + d + ' </td>';
+                    + '" data-day-of-month="' + d + '" data-year="' + year 
+                    + '" onclick="categoryCalendarApp.selectDay(' + categoryScheduleDate + ')">' 
+                    + d 
+                    + ' <div class="day-content" id="day-content-' + categoryScheduleDate + '"></div></td>';
             }
             if (i % 7 == 0) {
                 monthHTMLString = monthHTMLString + '</tr>'

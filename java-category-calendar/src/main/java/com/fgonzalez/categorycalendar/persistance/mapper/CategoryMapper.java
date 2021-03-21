@@ -14,7 +14,8 @@ import org.mapstruct.Mappings;
 public interface CategoryMapper {
     @Mappings({
         @Mapping(source = "id", target = "id"),
-        @Mapping(source = "categoryName", target = "categoryName"),
+        @Mapping(source = "name", target = "name"),
+        @Mapping(source = "color", target = "color"),
         @Mapping(source = "active", target = "active")
     })
     CategoryDTO toCategoryDTO(Category category);

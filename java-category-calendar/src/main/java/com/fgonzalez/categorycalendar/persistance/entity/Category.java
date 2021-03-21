@@ -27,7 +27,11 @@ public @Data class Category {
 
     @Column(name = "category_name")
     @NonNull
-    private String categoryName;
+    private String name;
+
+    @Column
+    @NonNull
+    private String color;
 
     @Column
     private Boolean active;

@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CategoryRepository extends CrudRepository<Category, Integer> {
-    @Query(value = "SELECT c FROM Category c WHERE c.categoryName = :categoryName")
-    Category findCategoryByNameCategory(@Param("categoryName") String categoryName);
+    @Query(value = "SELECT c FROM Category c WHERE c.name = :name")
+    Category findCategoryByNameCategory(@Param("name") String name);
 }

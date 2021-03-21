@@ -38,19 +38,18 @@ public class CategoryIntegrationTest {
 
     @BeforeEach
     void setup() {
-        category1 = Category.builder().id(1).categoryName("work").active(true).build();
-        category2 = Category.builder().id(2).categoryName("vacation").active(true).build();
+        category1 = Category.builder().id(1).name("vacations").color("ff5050").active(true).build();
+        category2 = Category.builder().id(2).name("work").color("0066ff").active(true).build();
         doReturn(Optional.of(category1)).when(categoryRepository).findById(1);
         doReturn(Optional.of(category2)).when(categoryRepository).findById(2);
         doReturn(Optional.empty()).when(categoryRepository).findById(3);
-        doReturn(category1).when(categoryRepository).findCategoryByNameCategory(category1.getCategoryName());
+        doReturn(category1).when(categoryRepository).findCategoryByNameCategory(category1.getName());
     }
 
     @Test
     @DisplayName("Test findById")
     public void testFindById() {
         Optional<CategoryDTO> returnedCategory = categoryService.findById(1);
-
         Assertions.assertTrue(returnedCategory.isPresent(), "Category was not found");
         Assertions.assertEquals(returnedCategory.get(), categoryMapper.toCategoryDTO(category1), "The category returned was not the same as the mock");
     }
@@ -73,7 +72,7 @@ public class CategoryIntegrationTest {
     @Test
     @DisplayName("Test save category")
     void testSave() {
-        Category category = Category.builder().id(3).categoryName("work").active(true).build();
+        Category category = Category.builder().id(3).name("special").color("00cc00").active(true).build();
         doReturn(category).when(categoryRepository).save(any());
 
         Optional<CategoryDTO> returnedCategory = categoryService.save(categoryMapper.toCategoryDTO(category1));
@@ -86,7 +85,7 @@ public class CategoryIntegrationTest {
     @Test
     @DisplayName("Test save category with no name")
     void testSaveNoName() {
-        CategoryDTO category = CategoryDTO.builder().id(1).categoryName("").active(true).build();
+        CategoryDTO category = CategoryDTO.builder().id(1).name("").color("").active(true).build();
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             categoryService.save(category);

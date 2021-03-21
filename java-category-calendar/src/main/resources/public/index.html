@@ -5,32 +5,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Category Calendar</title>
-
-    <!-- Bootstrap CSS -->
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <!-- Javascripts -->
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
     <!-- Project Files -->
+    <link rel="stylesheet" href="/css/category-calendar-app.css">
     <link rel="stylesheet" href="/css/jquery.bootstrap.year.calendar.css">
+	<link rel="stylesheet" href="/css/bootstrap-colorpicker.css">
+
+    <script src="/js/category-calendar-app.js"></script>
     <script src="/js/jquery.bootstrap.year.calendar.js"></script>
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/custom.js"></script>
+    <script src="/js/bootstrap-colorpicker.js"></script>    
+
+    <script>
+        $(document).ready(function () {
+            $('#calendar').calendar();
+            $('#colorPicker').colorpicker({
+                format: 'hex'
+            });
+            categoryCalendarApp.initCalendar();
+        });
+
+        $(document).on({
+            ajaxStart: function () {
+                $("body").addClass("loading");
+            },
+            ajaxStop: function () {
+                $("body").removeClass("loading");
+            }
+        });
+    </script>
 </head>
 
-<body>
-    <div class="container">
-        <div class="calendar"></div>
+<body class="loading">
+    <div class="container-fluid">
+        <div class="row" >
+            <div class="col col-xs-4">
+                <div class="thing">
+                    <h4>Add a Category</h4>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input id="name" type="text" class="form-control" placeholder="Example">
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <div id="colorPicker">
+                            <span class="input-group-append">
+                                <input id="categoryColor" type="text" class="form-control" placeholder="#000000" />
+                                <span id="colorPickerAddon" class="input-group-text colorpicker-input-addon"><i></i></span>
+                            </span>
+                        </div>
+                    </div>
+                    <button onclick="categoryCalendarApp.addCategory($('#name').val(), $('#categoryColor').val());" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+            <div class="col col-sm-8">
+                <div class="thing">
+                    <div><h4>Select a Category</h4></div>
+                    <div id="categories-table" class="col-md" >
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <script>
-        $('.calendar').calendar();
-    </script>
+
+    <div class="container-fluid">
+        <div class="thing">
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <!-- confirm modal -->
+    <div id="deletemodel" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">Are your shure?</div>
+                <div class="modal-body">
+                    <p id="deleteDescription"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="$('#deletemodel').modal('hide');">Cancel</button>
+                    <button id="deleteMoldelConfirm" type="button" class="btn btn-danger deleteConfirm">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- error new category modal -->
+    <div id="errormodal" class="modal fade">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header" id="errorModalTitle"></div>
+                <div class="modal-body">
+                    <p id="errorModalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="$('#errormodal').modal('hide');">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- loader -->
+    <div class="overlay"></div>
 </body>
 
 </html>

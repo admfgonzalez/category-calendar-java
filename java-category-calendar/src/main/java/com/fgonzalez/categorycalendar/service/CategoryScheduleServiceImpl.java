@@ -1,6 +1,5 @@
 package com.fgonzalez.categorycalendar.service;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -49,10 +48,6 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
         if (year < 1) {
             throw new IllegalArgumentException("The year mus be positive");
         }
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        if (year > currentYear) {
-            throw new IllegalArgumentException("The Category Schedule date must be past");
-        }
 
         return Optional.of(categoryScheduleMapper
                 .toCategorySchedulesDTO(categoryScheduleRepository.findCategorySchedulesByYear(year)));
@@ -61,11 +56,6 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
     @Override
     public Optional<CategoryScheduleDTO> addNew(CategoryScheduleDTO categoryScheduleDTO)
             throws IllegalArgumentException {
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        if (categoryScheduleDTO.getScheduleDate() > currentYear) {
-            throw new IllegalArgumentException("The Category Schedule date must be past");
-        }
-
         Optional<Category> searchCategory = categoryRepository.findById(categoryScheduleDTO.getCategory().getId());
         if (!searchCategory.isPresent()) {
             throw new RecordNotFoundException("Category not found");

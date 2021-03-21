@@ -10,7 +10,9 @@ import lombok.Data;
 public class CategoryDTO {
     private Integer id;
     @NotNull
-    private String categoryName;
+    private String name;
+    @NotNull
+    private String color;
     @NotNull
     private Boolean active;
 }

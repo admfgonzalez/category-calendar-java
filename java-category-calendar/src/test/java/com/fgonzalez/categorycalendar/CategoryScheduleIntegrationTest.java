@@ -40,7 +40,7 @@ public class CategoryScheduleIntegrationTest {
 
     @BeforeEach
     void setup() {
-        defaultCategory = Category.builder().id(1).categoryName("work").active(true).build();
+        defaultCategory = Category.builder().id(1).name("vacations").color("ff5050").active(true).build();
         categorySchedule1 = new CategorySchedule(1, 20210313, defaultCategory, true);
         categorySchedule2 = new CategorySchedule(2, 20210313, defaultCategory, true);
         newCategorySchedule = new CategorySchedule(3, 20210313, defaultCategory, true);

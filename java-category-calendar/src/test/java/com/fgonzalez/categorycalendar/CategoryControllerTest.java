@@ -38,9 +38,9 @@ public class CategoryControllerTest extends AbstractControllerTest {
         super.setUp();
         // mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        category1 = Category.builder().id(1).categoryName("Category Name").active(true).build();
-        category2 = Category.builder().id(2).categoryName("Category Name 2").active(true).build();
-        newCategory = Category.builder().id(3).categoryName("New Category Name").active(true).build();
+        category1 = Category.builder().id(1).name("vacations").color("ff5050").active(true).build();
+        category2 = Category.builder().id(2).name("work").color("0066ff").active(true).build();
+        newCategory = Category.builder().id(3).name("special").color("ff5050").active(true).build();
 
         doReturn(Arrays.asList(category1, category2)).when(categoryRepository).findAll();
         when(categoryRepository.findById(1)).thenReturn(Optional.of(category1));
@@ -86,7 +86,7 @@ public class CategoryControllerTest extends AbstractControllerTest {
                 "Expected operation was correct");
 
         Map<String, Object> payload = new HashMap<String, Object>();
-        payload.put("categoryName", null);
+        payload.put("name", null);
         payload.put("active", true);
         mvcResult = mvc.perform(MockMvcRequestBuilders.post("/category/addcategory")
                 .contentType(MediaType.APPLICATION_JSON_VALUE).content(mapToJson(payload))).andReturn();
