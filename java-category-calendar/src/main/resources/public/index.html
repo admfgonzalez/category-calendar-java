@@ -39,18 +39,18 @@
             categoryCalendarApp.initCalendar();
         });
 
-        $(document).on({
-            ajaxStart: function () {
-                $("body").addClass("loading");
-            },
-            ajaxStop: function () {
-                $("body").removeClass("loading");
-            }
-        });
+        // $(document).on({
+        //     ajaxStart: function () {
+        //         $("body").addClass("loading");
+        //     },
+        //     ajaxStop: function () {
+        //         $("body").removeClass("loading");
+        //     }
+        // });
     </script>
 </head>
 
-<body class="loading">
+<body>
     <div class="container-fluid">
         <div class="row" >
             <div class="col col-xs-4">
@@ -61,7 +61,7 @@
                         <input id="name" type="text" class="form-control" placeholder="Example">
                     </div>
                     <div class="form-group">
-                        <label for="color">Color</label>
+                        <label for="colorPicker">Color</label>
                         <div id="colorPicker">
                             <span class="input-group-append">
                                 <input id="categoryColor" type="text" class="form-control" placeholder="#000000" />
@@ -117,6 +117,14 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- reload data alert -->
+    <div id="reloadDataAlert" class="alert alert-success alert-dismissible fade" style="position: fixed; top: 10px; right: 10px;" role="alert">
+        <strong>Success!</strong> New changes have been uploaded to the agenda.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
 
     <!-- loader -->

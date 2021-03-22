@@ -21,7 +21,6 @@ import io.swagger.annotations.ApiParam;
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
-
     @Autowired
     private CategoryService categoryService;
 
@@ -35,7 +34,7 @@ public class CategoryController {
     @ApiOperation("Remove the send category")
     public void removeCategory(
             @ApiParam(value = "The category to remove", required = true) @Valid @RequestBody CategoryDTO oldCategoryDTO) {
-        categoryService.removeCategory(oldCategoryDTO);
+        categoryService.remove(oldCategoryDTO);
     }
 
     @ApiOperation("Add the send category")
@@ -43,5 +42,17 @@ public class CategoryController {
     public CategoryDTO addCategory(
             @ApiParam(value = "The category to add", required = true) @RequestBody CategoryDTO newCategoryDTO) {
         return categoryService.addNew(newCategoryDTO).get();
+    }
+
+    @ApiOperation("Get the last time of changes in millis")
+    @GetMapping(value = "/getlastchangetime", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Long getLastChangeTime() {
+        return categoryService.getLastChangeTime();
+    }
+
+    @ApiOperation("Returns true if there are changes since the send time")
+    @GetMapping(value = "/therearechanges", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Boolean thereAreChanges(Long timeInMillis) {
+        return categoryService.thereAreChanges(timeInMillis);
     }
 }

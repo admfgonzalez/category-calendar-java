@@ -1,43 +1,48 @@
 var categoryCalendarApp = (function () {
   let loadedCategories = [];
   let loadedCategoriesById = {};
-  let loadedCategorySchedulesByDate = {};
+  let loadedCategorySchedulesByCategory = {};
   let selectedCategoryBtnId = null;
+  let lastChangedtimeCategory = null;
+  let lastChangedtimeCategorySchedule = null;
+
+  const serverAndPort = "localhost:8080";
 
   // Functions
   function initCalendar() {
     clearNewCategoryForm();
-    ajaxLoadCategories();
-    ajaxGetCurrentYearCategorySchedules();
+    ajaxLastChangedTimeCategory();
+    setInterval(function () {
+      ajaxLastChangedTimeCategory();
+      ajaxLastChangedTimeCategorySchedule();
+    }, 15000);
   }
 
-  function loadCategories(responseCategories) {
-    clearCategories();
+  function loadCategoriesInView(responseCategories) {
+    clearCategoriesGrid();
     loadedCategories = responseCategories;
     loadedCategories.forEach(addCategoryButton);
     checkCategoryBtnSelected();
   }
 
-  function loadCategorySchedules(categorySchedules) {
-    clearCategorySchedules();
-    categorySchedules.forEach(loadCategorySchedule);
-  }
-
-  function loadCategorySchedule(categorySchedule) {
+  // View functions
+  function loadCategoryScheduleDay(categorySchedule) {
     let categoryId = categorySchedule.category.id;
     if (
-      typeof loadedCategorySchedulesByDate[categoryId] === "undefined" ||
-      loadedCategorySchedulesByDate[categoryId] === null
+      typeof loadedCategorySchedulesByCategory[categoryId] === "undefined" ||
+      loadedCategorySchedulesByCategory[categoryId] === null
     ) {
-      loadedCategorySchedulesByDate[categoryId] = {};
+      loadedCategorySchedulesByCategory[categoryId] = {};
     }
-    loadedCategorySchedulesByDate[categoryId][
+    loadedCategorySchedulesByCategory[categoryId][
       categorySchedule.scheduleDate
     ] = categorySchedule;
 
     if (categorySchedule.active) {
       $("#day-content-" + categorySchedule.scheduleDate).append(
-        '<div class="category-schedule" style="background-color: ' +
+        '<div id="category-schedule-btn-' +
+          categorySchedule.id +
+          '" class="category-schedule" style="background-color: ' +
           categorySchedule.category.color +
           ';">' +
           categorySchedule.category.name.charAt(0).toUpperCase() +
@@ -46,19 +51,31 @@ var categoryCalendarApp = (function () {
     }
   }
 
-  function clearCategories() {
+  function clearCategoriesGrid() {
     $("#categories-table").html("");
   }
 
-  function clearCategorySchedules() {
+  function clearCategorySchedulesGrid() {
     $(".day-content").html("");
   }
 
   function addCategoryButton(category, index) {
+    let oldCategory = loadedCategoriesById[category.id];
+    if (typeof oldCategory !== "undefined" && oldCategory !== null) {
+      removeCategoryBtn(category.id);
+      let oldCategorySchedulesMap = loadedCategorySchedulesByCategory[category.id];
+      if (
+        category.active &&
+        typeof oldCategorySchedulesMap !== "undefined" &&
+        oldCategorySchedulesMap !== null && category.color !== oldCategory.color
+      ) {
+        changeColorToCategorySchedulesDay(oldCategorySchedulesMap, category);
+      }
+    }
     loadedCategoriesById[category.id] = category;
     if (category.active) {
       $("#categories-table").append(
-        '<div id="btn-' +
+        '<div id="category-btn-' +
           category.id +
           '" class="btn btn-info btn-xs category category-btn" ' +
           'style="background-color: ' +
@@ -77,13 +94,37 @@ var categoryCalendarApp = (function () {
     }
   }
 
+  function changeColorToCategorySchedulesDay(categorySchedulesMap, category) {
+    Object.values(categorySchedulesMap).forEach(function (categorySchedule) {
+      changeColorToCategoryScheduleDay(categorySchedule, category);
+    });
+  }
+
+  function changeColorToCategoryScheduleDay(categorySchedule, category) {
+    $('#category-schedule-btn-' + categorySchedule.id).css('background-color', category.color);
+  }
+
+  function removeCategoryBtn(categoryId) {
+    $("#category-btn-" + categoryId).remove();
+  }
+
+  function removeCategorySchedulesDayByCategoryId(categoryId) {
+    Object.values(loadedCategorySchedulesByCategory[categoryId]).forEach(
+      removeCategorySchedulesDay
+    );
+  }
+
+  function removeCategorySchedulesDay(categorySchedule) {
+    $("#category-schedule-btn-" + categorySchedule.id).remove();
+  }
+
   function selectCategoryBtn(categoryBtnId) {
     $(".category-btn").removeClass("selected-category-btn");
     if (
       selectedCategoryBtnId === null ||
       selectedCategoryBtnId !== categoryBtnId
     ) {
-      $("#btn-" + categoryBtnId).addClass("selected-category-btn");
+      $("#category-btn-" + categoryBtnId).addClass("selected-category-btn");
       selectedCategoryBtnId = categoryBtnId;
     } else {
       selectedCategoryBtnId = null;
@@ -92,8 +133,27 @@ var categoryCalendarApp = (function () {
 
   function checkCategoryBtnSelected() {
     if (selectedCategoryBtnId !== null) {
-      $("#btn-" + selectedCategoryBtnId).addClass("selected-category-btn");
+      $("#category-btn-" + selectedCategoryBtnId).addClass(
+        "selected-category-btn"
+      );
     }
+  }
+
+  function clearNewCategoryForm() {
+    $("#name").val("");
+    $("#categoryColor").val("");
+    $("#colorPickerAddon i").css("background-color", "black");
+  }
+
+  function showError(title, message) {
+    $("#errorModalTitle").html(title);
+    $("#errorModalMessage").html(message);
+    $("#errormodal").modal("show");
+  }
+
+  function showReloadDataAlert() {
+    $('#reloadDataAlert').removeClass('fade');
+    $('#reloadDataAlert').fadeOut(5000);
   }
 
   function deleteCategoryConfirm(categoryId) {
@@ -106,7 +166,9 @@ var categoryCalendarApp = (function () {
       );
       $("#deleteMoldelConfirm").attr(
         "onclick",
-        "categoryCalendarApp.deleteCategory(" + categoryId + ');$("#deletemodel").modal("hide")'
+        "categoryCalendarApp.deleteCategory(" +
+          categoryId +
+          ');$("#deletemodel").modal("hide")'
       );
       $("#deletemodel").modal("show");
     }
@@ -128,7 +190,10 @@ var categoryCalendarApp = (function () {
       color.trim().length == 0 ||
       color.trim().length !== 7
     ) {
-      showError('Warning', 'The category must be min large of three, and must be select a color.');
+      showError(
+        "Warning",
+        "The category must be min large of three, and must be select a color."
+      );
     } else {
       ajaxAddCategory({
         name,
@@ -138,13 +203,8 @@ var categoryCalendarApp = (function () {
     }
   }
 
-  function clearNewCategoryForm() {
-    $("#name").val("");
-    $("#color").val("");
-    $("#colorPickerAddon i").css("background-color", "black");
-  }
-
-  function checkCategoryDeleted(categoryId) {
+  // Util functions
+  function checkCategoryDeletedIsSelected(categoryId) {
     if (categoryId === selectedCategoryBtnId) {
       selectedCategoryBtnId === null;
     }
@@ -157,7 +217,7 @@ var categoryCalendarApp = (function () {
   function selectDay(categoryScheduleDate) {
     if (selectedCategoryBtnId !== null) {
       let categorySchedulesBySelectedCategory =
-        loadedCategorySchedulesByDate[selectedCategoryBtnId];
+        loadedCategorySchedulesByCategory[selectedCategoryBtnId];
       let categorySearch =
         typeof categorySchedulesBySelectedCategory === "undefined" ||
         categorySchedulesBySelectedCategory === null
@@ -176,7 +236,7 @@ var categoryCalendarApp = (function () {
   }
 
   function addCategiorySchedule(categoryId, schedule) {
-    addCategorySchedule({
+    ajaxAddCategorySchedule({
       scheduleDate: schedule,
       active: true,
       category: loadedCategoriesById[categoryId],
@@ -184,102 +244,143 @@ var categoryCalendarApp = (function () {
   }
 
   function deleteCategiorySchedule(categorySchedule) {
-    removeCategorySchedule(categorySchedule);
+    ajaxRemoveCategorySchedule(categorySchedule);
   }
 
-  function showError(title, message) {
-    $('#errorModalTitle').html(title);
-    $('#errorModalMessage').html(message);
-    $("#errormodal").modal("show");
-  }
-
-  // Ajax calls
-  function ajaxLoadCategories() {
+  // Rest functions
+  function ajaxLastChangedTimeCategory() {
     $.ajax({
-      url: "http://localhost:8080/category/getcategories",
-      success: function (responseCategories) {
-        loadCategories(responseCategories);
+      url: "http://" + serverAndPort + "/category/getlastchangetime",
+      success: function (responsetime) {
+        if (
+          lastChangedtimeCategory === null ||
+          lastChangedtimeCategory !== responsetime
+        ) {
+          ajaxLoadCategories();
+          ajaxGetCurrentYearCategorySchedules();
+          if (lastChangedtimeCategory !== null)
+            showReloadDataAlert();
+          lastChangedtimeCategory = responsetime;
+        }
       },
       error: function (errorResponse) {
-        showError('Error', errorResponse['responseJSON']['message']);
+        showError("Error", errorResponse["responseJSON"]["message"]);
+      },
+    });
+  }
+
+  function ajaxLastChangedTimeCategorySchedule() {
+    $.ajax({
+      url: "http://" + serverAndPort + "/categoryschedule/getlastchangetime",
+      success: function (responsetime) {
+        if (
+          lastChangedtimeCategorySchedule === null ||
+          lastChangedtimeCategorySchedule !== responsetime
+        ) {
+          ajaxGetCurrentYearCategorySchedules();
+          if (lastChangedtimeCategory !== null)
+            showReloadDataAlert();
+          lastChangedtimeCategorySchedule = responsetime;
+        }
+      },
+      error: function (errorResponse) {
+        showError("Error", errorResponse["responseJSON"]["message"]);
+      },
+    });
+  }
+
+  function ajaxLoadCategories() {
+    $.ajax({
+      url: "http://" + serverAndPort + "/category/getcategories",
+      success: function (responseCategories) {
+        loadCategoriesInView(responseCategories);
+      },
+      error: function (errorResponse) {
+        showError("Error", errorResponse["responseJSON"]["message"]);
       },
     });
   }
 
   function ajaxAddCategory(category) {
     $.ajax({
-      url: "http://localhost:8080/category/addcategory/",
+      url: "http://" + serverAndPort + "/category/addcategory/",
       data: JSON.stringify(category),
       type: "POST",
       contentType: "application/json",
       success: function (responseCategory) {
-        initCalendar();
+        addCategoryButton(responseCategory);
+        clearNewCategoryForm();
       },
       error: function (errorResponse) {
-        showError('Error', errorResponse['responseJSON']['message']);
+        showError("Error", errorResponse["responseJSON"]["message"]);
       },
     });
   }
 
   function ajaxRemoveCategory(categoryId) {
     $.ajax({
-      url: "http://localhost:8080/category/removecategory/",
+      url: "http://" + serverAndPort + "/category/removecategory/",
       data: JSON.stringify(loadedCategoriesById[categoryId]),
       type: "POST",
       contentType: "application/json",
       success: function (data) {
-        checkCategoryDeleted(categoryId);
-        ajaxLoadCategories();
-        ajaxGetCurrentYearCategorySchedules();
+        checkCategoryDeletedIsSelected(categoryId);
+        removeCategoryBtn(categoryId);
+        removeCategorySchedulesDayByCategoryId(categoryId);
       },
       error: function (errorResponse) {
-        showError('Error', errorResponse['responseJSON']['message']);
+        showError("Error", errorResponse["responseJSON"]["message"]);
       },
     });
   }
 
   function ajaxGetCurrentYearCategorySchedules() {
     $.ajax({
-      url: "http://localhost:8080/categoryschedule/getcategoryschedulesbyyear",
+      url:
+        "http://" +
+        serverAndPort +
+        "/categoryschedule/getcategoryschedulesbyyear",
       data: {
         year: new Date().getFullYear(),
       },
       contentType: "application/json",
       success: function (responseCategoriesSchedules) {
-        loadCategorySchedules(responseCategoriesSchedules);
+        clearCategorySchedulesGrid();
+        responseCategoriesSchedules.forEach(loadCategoryScheduleDay);
       },
       error: function (errorResponse) {
-        showError('Error', errorResponse['responseJSON']['message']);
+        showError("Error", errorResponse["responseJSON"]["message"]);
       },
     });
   }
 
-  function removeCategorySchedule(categorySchedule) {
+  function ajaxRemoveCategorySchedule(categorySchedule) {
     $.ajax({
-      url: "http://localhost:8080/categoryschedule/removecategoryschedule",
+      url:
+        "http://" + serverAndPort + "/categoryschedule/removecategoryschedule",
       data: JSON.stringify(categorySchedule),
       type: "POST",
       contentType: "application/json",
       success: function (response) {
-        ajaxGetCurrentYearCategorySchedules();
+        removeCategorySchedulesDay(categorySchedule);
       },
       error: function (errorResponse) {
-        showError('Error', errorResponse['responseJSON']['message']);
+        showError("Error", errorResponse["responseJSON"]["message"]);
       },
     });
   }
 
-  function addCategorySchedule(categorySchedule) {
+  function ajaxAddCategorySchedule(categorySchedule) {
     $.ajax({
-      url: "http://localhost:8080/categoryschedule/addcategoryschedule",
+      url: "http://" + serverAndPort + "/categoryschedule/addcategoryschedule",
       data: JSON.stringify(categorySchedule),
       type: "POST",
       contentType: "application/json",
-      success: function (repsonseCategorySchedule) {
-        ajaxGetCurrentYearCategorySchedules();
+      success: function (responseCategorySchedule) {
+        loadCategoryScheduleDay(responseCategorySchedule);
       },
       error: function (errorResponse) {
-        showError('Error', errorResponse['responseJSON']['message']);
+        showError("Error", errorResponse["responseJSON"]["message"]);
       },
     });
   }
@@ -291,6 +392,6 @@ var categoryCalendarApp = (function () {
     deleteCategoryConfirm,
     selectCategoryBtn,
     addCategory,
-    selectDay
+    selectDay,
   };
 })();

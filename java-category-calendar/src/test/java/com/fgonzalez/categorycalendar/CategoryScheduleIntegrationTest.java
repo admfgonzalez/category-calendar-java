@@ -98,7 +98,7 @@ public class CategoryScheduleIntegrationTest {
     @Test
     @DisplayName("Test remove Category Schedule")
     void testRemoveCategorySchedule() {
-        categoryScheduleService.removeCategorySchedule(categoryScheduleMapper.toCategoryScheduleDTO(categorySchedule1));
+        categoryScheduleService.remove(categoryScheduleMapper.toCategoryScheduleDTO(categorySchedule1));
         Optional<CategorySchedule> returnedCategorySchedule = categoryScheduleRepository
                 .findById(categorySchedule1.getId());
 

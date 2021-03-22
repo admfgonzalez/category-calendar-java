@@ -95,7 +95,7 @@ public class CategoryIntegrationTest {
     @Test
     @DisplayName("Test remove Category")
     void testRemoveCategory() {
-        categoryService.removeCategory(categoryMapper.toCategoryDTO(category1));
+        categoryService.remove(categoryMapper.toCategoryDTO(category1));
 
         Optional<CategoryDTO> returnedCategory = categoryService.findById(1);
 

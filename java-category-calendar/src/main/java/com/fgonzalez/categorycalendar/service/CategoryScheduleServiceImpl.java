@@ -13,6 +13,7 @@ import com.fgonzalez.categorycalendar.persistance.mapper.CategoryMapper;
 import com.fgonzalez.categorycalendar.persistance.mapper.CategoryScheduleMapper;
 import com.fgonzalez.categorycalendar.persistance.repository.CategoryRepository;
 import com.fgonzalez.categorycalendar.persistance.repository.CategoryScheduleRepository;
+import com.fgonzalez.categorycalendar.util.ChangeTimeVerificatorUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,12 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+    private ChangeTimeVerificatorUtil changeTimeVerificator = new ChangeTimeVerificatorUtil();
+
     @Override
     public Optional<CategoryScheduleDTO> findById(Integer id) {
-        return categoryScheduleRepository.findById(id).map(categorySchedule -> categoryScheduleMapper.toCategoryScheduleDTO(categorySchedule));
+        return categoryScheduleRepository.findById(id)
+                .map(categorySchedule -> categoryScheduleMapper.toCategoryScheduleDTO(categorySchedule));
     }
 
     @Override
@@ -66,13 +70,16 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
 
         if (categoryByScheduleAndCategoryId != null) {
             categoryByScheduleAndCategoryId.setActive(true);
-            return Optional.of(categoryScheduleMapper
-                    .toCategoryScheduleDTO(categoryScheduleRepository.save(categoryByScheduleAndCategoryId)));
+            CategorySchedule result = categoryScheduleRepository.save(categoryByScheduleAndCategoryId);
+            changeTimeVerificator.updateLastChangeTime();
+            return Optional.of(categoryScheduleMapper.toCategoryScheduleDTO(result));
         }
 
         categoryScheduleDTO.setCategory(categoryMapper.toCategoryDTO(searchCategory.get()));
-        return Optional.of(categoryScheduleMapper.toCategoryScheduleDTO(
-                categoryScheduleRepository.save(categoryScheduleMapper.toCategorySchedule(categoryScheduleDTO))));
+        CategorySchedule result = categoryScheduleRepository
+                .save(categoryScheduleMapper.toCategorySchedule(categoryScheduleDTO));
+        changeTimeVerificator.updateLastChangeTime();
+        return Optional.of(categoryScheduleMapper.toCategoryScheduleDTO(result));
     }
 
     @Override
@@ -80,20 +87,34 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
         if (categoryScheduleDTO == null) {
             throw new IllegalArgumentException("The Category Schedule must be not null");
         }
-        return Optional.of(categoryScheduleMapper.toCategoryScheduleDTO(
-                categoryScheduleRepository.save(categoryScheduleMapper.toCategorySchedule(categoryScheduleDTO))));
+        CategorySchedule result = categoryScheduleRepository
+                .save(categoryScheduleMapper.toCategorySchedule(categoryScheduleDTO));
+        changeTimeVerificator.updateLastChangeTime();
+        return Optional.of(categoryScheduleMapper.toCategoryScheduleDTO(result));
     }
 
     // No category schedule must be deleted
     @Override
-    public void removeCategorySchedule(CategoryScheduleDTO categoryScheduleDTO) {
+    public void remove(CategoryScheduleDTO categoryScheduleDTO) {
         Optional<CategorySchedule> searchCategory = categoryScheduleRepository.findById(categoryScheduleDTO.getId());
         if (searchCategory.isPresent()) {
             searchCategory.get().setActive(false);
             categoryScheduleRepository.save(searchCategory.get());
+            changeTimeVerificator.updateLastChangeTime();
         } else {
             throw new RecordNotFoundException(
                     "Category Schedule with id '" + categoryScheduleDTO.getId() + "' does no exist");
         }
     }
+
+    @Override
+    public Boolean thereAreChanges(Long timeInMillis) {
+        return changeTimeVerificator.verifyHaveChanges(timeInMillis);
+    }
+
+    @Override
+    public Long getLastChangeTime() {
+        return changeTimeVerificator.getLastChangeTime();
+    }
+
 }

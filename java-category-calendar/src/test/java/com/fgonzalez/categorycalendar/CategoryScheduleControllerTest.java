@@ -118,13 +118,5 @@ public class CategoryScheduleControllerTest extends AbstractControllerTest {
 
                 Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus(),
                                 "Expected operation was correct");
-
-                mvcResult = mvc
-                                .perform(MockMvcRequestBuilders.get("/categoryschedule/getcategoryschedulesbyyear")
-                                                .contentType(MediaType.APPLICATION_JSON_VALUE).param("year", "2025"))
-                                .andReturn();
-
-                Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), mvcResult.getResponse().getStatus(),
-                                "Expected operations fails");
         }
 }

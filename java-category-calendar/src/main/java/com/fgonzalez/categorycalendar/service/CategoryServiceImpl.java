@@ -10,6 +10,7 @@ import com.fgonzalez.categorycalendar.persistance.entity.Category;
 import com.fgonzalez.categorycalendar.persistance.mapper.CategoryMapper;
 import com.fgonzalez.categorycalendar.persistance.repository.CategoryRepository;
 import com.fgonzalez.categorycalendar.persistance.repository.CategoryScheduleRepository;
+import com.fgonzalez.categorycalendar.util.ChangeTimeVerificatorUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    private ChangeTimeVerificatorUtil changeTimeVerificator = new ChangeTimeVerificatorUtil();
 
     @Override
     public Optional<CategoryDTO> findById(Integer id) {
@@ -48,7 +51,9 @@ public class CategoryServiceImpl implements CategoryService {
         if (responseCategory != null) {
             responseCategory.setActive(true);
             responseCategory.setColor(categoryDTO.getColor());
-            return Optional.of(categoryMapper.toCategoryDTO(categoryRepository.save(responseCategory)));
+            Category result = categoryRepository.save(responseCategory);
+            changeTimeVerificator.updateLastChangeTime();
+            return Optional.of(categoryMapper.toCategoryDTO(result));
         }
         return save(categoryDTO);
     }
@@ -60,20 +65,32 @@ public class CategoryServiceImpl implements CategoryService {
         }
         categoryDTO.setName(categoryDTO.getName().toLowerCase());
         Category cat = categoryMapper.toCategory(categoryDTO);
-        return Optional
-                .of(categoryMapper.toCategoryDTO(categoryRepository.save(cat)));
+        Category result = categoryRepository.save(cat);
+        changeTimeVerificator.updateLastChangeTime();
+        return Optional.of(categoryMapper.toCategoryDTO(result));
     }
 
     // No category must be deleted
     @Override
-    public void removeCategory(CategoryDTO categoryDTO) throws IllegalArgumentException {
+    public void remove(CategoryDTO categoryDTO) throws IllegalArgumentException {
         Optional<Category> searchCategory = categoryRepository.findById(categoryDTO.getId());
         if (searchCategory.isPresent()) {
             searchCategory.get().setActive(false);
             categoryRepository.save(searchCategory.get());
             categoryScheduleRepository.deactivateByCategoryId(searchCategory.get());
+            changeTimeVerificator.updateLastChangeTime();
         } else {
             throw new RecordNotFoundException("Category with id '" + categoryDTO.getId() + "' does no exist");
         }
+    }
+    
+    @Override
+    public Boolean thereAreChanges(Long timeInMillis) {
+        return changeTimeVerificator.verifyHaveChanges(timeInMillis);
+    }
+
+    @Override
+    public Long getLastChangeTime() {
+        return changeTimeVerificator.getLastChangeTime();
     }
 }

@@ -40,7 +40,7 @@ public class CategoryScheduleController {
     @PostMapping(value = "/removecategoryschedule", produces = MediaType.APPLICATION_JSON_VALUE)
     public void removeCategorySchedule(
             @ApiParam(value = "The category schedule to remove", required = true) @RequestBody CategoryScheduleDTO oldCategorySchedule) {
-        categoryScheduleService.removeCategorySchedule(oldCategorySchedule);
+        categoryScheduleService.remove(oldCategorySchedule);
     }
 
     @ApiOperation("Add the send Category Schedule")
@@ -48,5 +48,17 @@ public class CategoryScheduleController {
     public CategoryScheduleDTO addCategorySchedule(
             @ApiParam(value = "The category schedule to add", required = true) @RequestBody CategoryScheduleDTO newCategoryScheduleDTO) {
         return categoryScheduleService.addNew(newCategoryScheduleDTO).get();
+    }
+
+    @ApiOperation("Get the last time of changes in millis")
+    @GetMapping(value = "/getlastchangetime", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Long getLastChangeTime() {
+        return categoryScheduleService.getLastChangeTime();
+    }
+
+    @ApiOperation("Returns true if there are changes since the send time")
+    @GetMapping(value = "/therearechanges", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Boolean thereAreChanges(Long timeInMillis) {
+        return categoryScheduleService.thereAreChanges(timeInMillis);
     }
 }
