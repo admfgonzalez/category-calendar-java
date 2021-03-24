@@ -16,7 +16,7 @@ For building and running the application you need:
 mvn spring-boot:run
 ```
 
-### A little web page be deploy [locally](http://localhost:8080/) and [swagger ui](http://localhost:8080/swagger-ui/) 
+### A little web page deploy [locally](http://localhost:8080/) and its [swagger ui](http://localhost:8080/swagger-ui/) 
 ## Tecnologies
 - Java
     - Spring Boot
