@@ -11,9 +11,25 @@ For building and running the application you need:
 
 - Execute the `main` method in the `com.fgonzalez.categorycalendar.CategoryCalendarApp` class from your favorite IDE.
 
-Also you can use
+- Also you can use mvn spring boot run command
 ```
 mvn spring-boot:run
 ```
-from java-category-calendar
+
+### A little web page be deploy [locally](http://localhost:8080/) and [swagger ui](http://localhost:8080/swagger-ui/) 
 ## Tecnologies
+- Java
+    - Spring Boot
+    - Lombok
+    - Spring Web
+    - H2 DB
+    - Spring Data JPA
+    - MapStruct
+    - Swagger
+    - JUnit (test)
+    - Mockito (test)
+- Javascript
+    - JQuery 3.3.1
+    - Bootstrap 4
+        - jquery bootstrap year calendar
+        - bootstrap colorpicker

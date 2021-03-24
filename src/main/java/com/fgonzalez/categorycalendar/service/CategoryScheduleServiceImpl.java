@@ -108,11 +108,6 @@ public class CategoryScheduleServiceImpl implements CategoryScheduleService {
     }
 
     @Override
-    public Boolean thereAreChanges(Long timeInMillis) {
-        return changeTimeVerificator.verifyHaveChanges(timeInMillis);
-    }
-
-    @Override
     public Long getLastChangeTime() {
         return changeTimeVerificator.getLastChangeTime();
     }

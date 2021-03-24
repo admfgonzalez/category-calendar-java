@@ -49,10 +49,4 @@ public class CategoryController {
     public Long getLastChangeTime() {
         return categoryService.getLastChangeTime();
     }
-
-    @ApiOperation("Returns true if there are changes since the send time")
-    @GetMapping(value = "/therearechanges", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Boolean thereAreChanges(Long timeInMillis) {
-        return categoryService.thereAreChanges(timeInMillis);
-    }
 }

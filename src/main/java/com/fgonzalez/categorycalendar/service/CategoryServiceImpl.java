@@ -83,11 +83,6 @@ public class CategoryServiceImpl implements CategoryService {
             throw new RecordNotFoundException("Category with id '" + categoryDTO.getId() + "' does no exist");
         }
     }
-    
-    @Override
-    public Boolean thereAreChanges(Long timeInMillis) {
-        return changeTimeVerificator.verifyHaveChanges(timeInMillis);
-    }
 
     @Override
     public Long getLastChangeTime() {
