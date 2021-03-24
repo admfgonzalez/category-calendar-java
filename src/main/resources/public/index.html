@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Category Calendar</title>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <!-- Project Files -->
+    <link rel="stylesheet" href="/css/category-calendar-app.css">
+    <link rel="stylesheet" href="/css/jquery.bootstrap.year.calendar.css">
+	<link rel="stylesheet" href="/css/bootstrap-colorpicker.css">
+
+    <script src="/js/category-calendar-app.js"></script>
+    <script src="/js/jquery.bootstrap.year.calendar.js"></script>
+    <script src="/js/bootstrap-colorpicker.js"></script>    
+
+    <script>
+        $(document).ready(function () {
+            $('#calendar').calendar();
+            $('#colorPicker').colorpicker({
+                format: 'hex'
+            });
+            categoryCalendarApp.initPoll();
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row" >
+            <div class="col col-xs-4">
+                <div class="thing">
+                    <h4>Add a Category</h4>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input id="name" type="text" class="form-control" placeholder="Example">
+                    </div>
+                    <div class="form-group">
+                        <label for="colorPicker">Color</label>
+                        <div id="colorPicker">
+                            <span class="input-group-append">
+                                <input id="categoryColor" type="text" class="form-control" placeholder="#000000" />
+                                <span class="input-group-text colorpicker-input-addon"><i id="colorPickerAddon"  data-toggle="tooltip" data-placement="bottom" title="Click for color selector"></i></span>
+                            </span>
+                        </div>
+                    </div>
+                    <button onclick="categoryCalendarApp.addCategory($('#name').val(), $('#categoryColor').val());" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+            <div class="col col-sm-8">
+                <div class="thing">
+                        <div>
+                            <div>
+                                <h4>Select a category</h4>
+                            </div>
+                        </div>
+                    <div id="categories-table" class="col-md" data-parent="#categoriesToggle">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="thing">
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <!-- confirm modal -->
+    <div id="deletemodel" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">Are your shure?</div>
+                <div class="modal-body">
+                    <p id="deleteDescription"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="$('#deletemodel').modal('hide');">Cancel</button>
+                    <button id="deleteMoldelConfirm" type="button" class="btn btn-danger deleteConfirm">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- error new category modal -->
+    <div id="errormodal" class="modal fade">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header" id="errorModalTitle"></div>
+                <div class="modal-body">
+                    <p id="errorModalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="$('#errormodal').modal('hide');">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- reload data alert -->
+    <div id="reloadDataAlert" class="alert alert-success alert-dismissible alert-refresh-data" style="display: none;" role="alert">
+        <strong>Success!</strong> New changes have been uploaded to the agenda.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</body>
+
+</html>

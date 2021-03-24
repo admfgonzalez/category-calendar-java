@@ -37,19 +37,11 @@ Add Spring boot dependences
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-java8time</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -218,3 +210,5 @@ git checkout category-develop
 creation of test, repositories, controller, model and service through 'TDD'
 
 * For the correct insert of data.sql I have to create InMemoryConfig.java and add @Postonstruct with the call of the archive data.sql.
+
+creation of frontend 

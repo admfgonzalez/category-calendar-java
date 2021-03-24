@@ -1,0 +1,147 @@
+@media all and (max-width: 35em) {
+  .ui-grid .ui-block-a,
+  .ui-grid .ui-block-b,
+  .ui-grid .ui-block-c {
+    width: 100%;
+    float: none;
+  }
+}
+
+@media all and (min-width: 45em) {
+  .ui-grid .ui-block-a,
+  .ui-grid .ui-block-b,
+  .ui-grid .ui-block-c {
+    width: 33.33%;
+  }
+}
+
+.jqyc-td {
+  height: 80px !important;
+}
+
+.thing {
+  margin: 1rem;
+  padding: 2rem;
+  box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.11),
+    0 5px 15px 0 rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+}
+
+.thing > :first-child {
+  margin-top: 0;
+}
+
+.thing > :last-child {
+  margin-bottom: 0;
+}
+
+.heading {
+  color: #fff;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: #0099ff;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.95) url("/img/preloader.gif") center
+    no-repeat;
+}
+
+body.loading {
+  overflow: hidden;
+}
+
+body.loading .overlay {
+  display: block;
+}
+
+.row-cc {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.selected-category-btn {
+  box-shadow: rgb(0, 0, 0) 0px 0px 0px 3px,
+    rgb(255, 255, 255) 0px 0px 0px 3px inset;
+}
+
+.category {
+  margin: 2px;
+}
+
+.category-text {
+  margin-right: 20px;
+}
+
+.category-btn {
+  text-transform: capitalize;
+}
+
+.delete-me-btn {
+  position: relative;
+  right: -8px;
+  float: right;
+  color: #e01134;
+  border-radius: 50%;
+  background-color: rgb(229, 226, 226);
+  width: 23px;
+  height: 23px;
+}
+
+.category-count {
+  position: relative;
+  left: -8px;
+  float: left;
+  color: #000000;
+  border-radius: 50%;
+  background-color: #ffffff;
+  min-width: 23px;
+  height: 23px;
+  cursor: auto;
+  font-family: monospace;
+}
+
+.delete-me-btn:hover {
+  background-color: rgb(39, 39, 39);
+}
+
+.delete-category-confirm-name {
+  color: #bf3880;
+  text-transform: capitalize;
+}
+
+.category-schedule {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  display: inline-block;
+  text-transform: capitalize;
+  color: #ffffff;
+}
+
+.alert-refresh-data {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
+
+.categories-toggle-btn {
+  position: absolute;
+  right: 60px;
+}
