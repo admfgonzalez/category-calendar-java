@@ -36,17 +36,8 @@
             $('#colorPicker').colorpicker({
                 format: 'hex'
             });
-            categoryCalendarApp.initCalendar();
+            categoryCalendarApp.initPoll();
         });
-
-        // $(document).on({
-        //     ajaxStart: function () {
-        //         $("body").addClass("loading");
-        //     },
-        //     ajaxStop: function () {
-        //         $("body").removeClass("loading");
-        //     }
-        // });
     </script>
 </head>
 
@@ -65,7 +56,7 @@
                         <div id="colorPicker">
                             <span class="input-group-append">
                                 <input id="categoryColor" type="text" class="form-control" placeholder="#000000" />
-                                <span id="colorPickerAddon" class="input-group-text colorpicker-input-addon"><i></i></span>
+                                <span class="input-group-text colorpicker-input-addon"><i id="colorPickerAddon"  data-toggle="tooltip" data-placement="bottom" title="Click for color selector"></i></span>
                             </span>
                         </div>
                     </div>
@@ -74,8 +65,12 @@
             </div>
             <div class="col col-sm-8">
                 <div class="thing">
-                    <div><h4>Select a Category</h4></div>
-                    <div id="categories-table" class="col-md" >
+                        <div>
+                            <div>
+                                <h4>Select a category</h4>
+                            </div>
+                        </div>
+                    <div id="categories-table" class="col-md" data-parent="#categoriesToggle">
                     </div>
                 </div>
             </div>
@@ -120,15 +115,12 @@
     </div>
 
     <!-- reload data alert -->
-    <div id="reloadDataAlert" class="alert alert-success alert-dismissible fade" style="position: fixed; top: 10px; right: 10px;" role="alert">
+    <div id="reloadDataAlert" class="alert alert-success alert-dismissible alert-refresh-data" style="display: none;" role="alert">
         <strong>Success!</strong> New changes have been uploaded to the agenda.
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-
-    <!-- loader -->
-    <div class="overlay"></div>
 </body>
 
 </html>

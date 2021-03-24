@@ -4,7 +4,7 @@
  * Licensed under the MIT license.
 
  * @author Piotr Zatorski
- * @author Francisco Gonzalez
+ * @author Francisco Gonzalez // Add integration with Category Calendar see function jqycGetMonthHTMLStringWithData
  */
  (function ($) {
 

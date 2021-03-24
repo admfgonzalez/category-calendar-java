@@ -78,7 +78,7 @@ body.loading .overlay {
 
 .selected-category-btn {
   box-shadow: rgb(0, 0, 0) 0px 0px 0px 3px,
-  rgb(255, 255, 255) 0px 0px 0px 3px inset;
+    rgb(255, 255, 255) 0px 0px 0px 3px inset;
 }
 
 .category {
@@ -102,7 +102,19 @@ body.loading .overlay {
   background-color: rgb(229, 226, 226);
   width: 23px;
   height: 23px;
-  z-index: 999;
+}
+
+.category-count {
+  position: relative;
+  left: -8px;
+  float: left;
+  color: #000000;
+  border-radius: 50%;
+  background-color: #ffffff;
+  min-width: 23px;
+  height: 23px;
+  cursor: auto;
+  font-family: monospace;
 }
 
 .delete-me-btn:hover {
@@ -121,4 +133,15 @@ body.loading .overlay {
   display: inline-block;
   text-transform: capitalize;
   color: #ffffff;
+}
+
+.alert-refresh-data {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
+
+.categories-toggle-btn {
+  position: absolute;
+  right: 60px;
 }
