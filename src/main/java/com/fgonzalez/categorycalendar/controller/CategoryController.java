@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import com.fgonzalez.categorycalendar.model.CategoryDTO;
+import com.fgonzalez.categorycalendar.domain.CategoryDTO;
 import com.fgonzalez.categorycalendar.service.CategoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;

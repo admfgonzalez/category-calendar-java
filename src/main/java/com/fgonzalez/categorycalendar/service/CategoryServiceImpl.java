@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.fgonzalez.categorycalendar.exception.RecordNotFoundException;
-import com.fgonzalez.categorycalendar.model.CategoryDTO;
+import com.fgonzalez.categorycalendar.domain.CategoryDTO;
 import com.fgonzalez.categorycalendar.persistance.entity.Category;
 import com.fgonzalez.categorycalendar.persistance.mapper.CategoryMapper;
 import com.fgonzalez.categorycalendar.persistance.repository.CategoryRepository;

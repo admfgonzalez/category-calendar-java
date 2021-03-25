@@ -1,4 +1,4 @@
-package com.fgonzalez.categorycalendar.model;
+package com.fgonzalez.categorycalendar.domain;
 
 import java.io.Serializable;
 import java.util.List;

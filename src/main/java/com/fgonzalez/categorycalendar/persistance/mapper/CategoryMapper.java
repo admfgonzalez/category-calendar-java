@@ -2,7 +2,7 @@ package com.fgonzalez.categorycalendar.persistance.mapper;
 
 import java.util.List;
 
-import com.fgonzalez.categorycalendar.model.CategoryDTO;
+import com.fgonzalez.categorycalendar.domain.CategoryDTO;
 import com.fgonzalez.categorycalendar.persistance.entity.Category;
 
 import org.mapstruct.InheritInverseConfiguration;

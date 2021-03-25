@@ -18,7 +18,7 @@ mvn spring-boot:run
 
 ### A little web page deploy [locally](http://localhost:8080/) and its [swagger ui](http://localhost:8080/swagger-ui/) 
 ## Tecnologies
-- Java
+- Java 1.8
     - Spring Boot
     - Lombok
     - Spring Web

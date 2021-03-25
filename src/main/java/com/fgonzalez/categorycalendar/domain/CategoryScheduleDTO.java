@@ -1,7 +1,8 @@
-package com.fgonzalez.categorycalendar.model;
+package com.fgonzalez.categorycalendar.domain;
 
 import java.io.Serializable;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -12,13 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public @Data class CategoryDTO implements Serializable {
+public @Data class CategoryScheduleDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer id;
     @NotNull
-    private String name;
+    private Integer scheduleDate;
     @NotNull
-    private String color;
+    @Valid
+    private CategoryDTO category;
     @NotNull
     private Boolean active;
 }

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.fgonzalez.categorycalendar.exception.RecordNotFoundException;
-import com.fgonzalez.categorycalendar.model.CategoryScheduleDTO;
+import com.fgonzalez.categorycalendar.domain.CategoryScheduleDTO;
 import com.fgonzalez.categorycalendar.persistance.entity.Category;
 import com.fgonzalez.categorycalendar.persistance.entity.CategorySchedule;
 import com.fgonzalez.categorycalendar.persistance.mapper.CategoryMapper;

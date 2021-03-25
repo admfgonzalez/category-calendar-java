@@ -2,7 +2,7 @@ package com.fgonzalez.categorycalendar.controller;
 
 import java.util.List;
 
-import com.fgonzalez.categorycalendar.model.CategoryScheduleDTO;
+import com.fgonzalez.categorycalendar.domain.CategoryScheduleDTO;
 import com.fgonzalez.categorycalendar.service.CategoryScheduleService;
 
 import org.springframework.beans.factory.annotation.Autowired;

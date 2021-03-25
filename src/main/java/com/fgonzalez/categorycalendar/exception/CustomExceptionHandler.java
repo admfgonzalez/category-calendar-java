@@ -3,7 +3,7 @@ package com.fgonzalez.categorycalendar.exception;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fgonzalez.categorycalendar.model.ErrorResponse;
+import com.fgonzalez.categorycalendar.domain.ErrorResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
